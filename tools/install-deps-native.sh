@@ -105,11 +105,12 @@ if [ ! -d aws-sdk-cpp ]; then
         -DBUILD_ONLY='s3-crt;iot' \
         -DAWS_CUSTOM_MEMORY_MANAGEMENT=ON \
         -DZLIB_LIBRARY=libz.a \
+        -DCURL_LIBRARY=libcurl.a \
         ..
     cd ../..
 fi
 make install -j`nproc` -C aws-sdk-cpp/build
-sed -i -E 's#;[^;]*libcurl\.a;#;libcurl.a;libssl.a;#' /usr/local/lib/cmake/aws-cpp-sdk-core/aws-cpp-sdk-core-targets.cmake
+sed -i -E 's#libcurl\.a;#libcurl.a;libssl.a;#' /usr/local/lib/cmake/aws-cpp-sdk-core/aws-cpp-sdk-core-targets.cmake
 
 if [ ! -d googletest ]; then
     git clone -b release-1.10.0 https://github.com/google/googletest.git
