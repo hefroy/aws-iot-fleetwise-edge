@@ -23,7 +23,9 @@ jobs:
         key: ${{ runner.os }}-deps
   
     - name: install-deps
-      run: sudo ./tools/install-deps-native.sh
+      run: |
+        sudo ./tools/install-deps-native.sh
+        sudo chown -R $(id -u):$(id -g) deps-native
 
     - name: build
       run: |

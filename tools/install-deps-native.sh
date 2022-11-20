@@ -37,7 +37,6 @@ apt install -y \
     wget \
     curl \
     zlib1g-dev \
-    libcurl4-openssl-dev \
     libsnappy-dev \
     doxygen \
     graphviz \
@@ -81,19 +80,36 @@ if [ ! -d can-isotp ]; then
 fi
 cp can-isotp/include/uapi/linux/can/isotp.h /usr/include/linux/can
 
+if [ ! -d curl ]; then
+    git clone -b curl-7_86_0 https://github.com/curl/curl.git
+    cd curl
+    mkdir build && cd build
+    cmake \
+        -DBUILD_SHARED_LIBS=Off \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DBUILD_TESTING=Off \
+        -DBUILD_CURL_EXE=Off \
+        ..
+    cd ../..
+fi
+make install -j`nproc` -C curl/build
+
 if [ ! -d aws-sdk-cpp ]; then
     git clone -b 1.9.253 --recursive https://github.com/aws/aws-sdk-cpp.git
     cd aws-sdk-cpp
     mkdir build && cd build
     cmake \
+        -DENABLE_TESTING=OFF \
         -DBUILD_SHARED_LIBS=OFF \
         -DCMAKE_BUILD_TYPE=Release \
         -DBUILD_ONLY='s3-crt;iot' \
         -DAWS_CUSTOM_MEMORY_MANAGEMENT=ON \
+        -DZLIB_LIBRARY=libz.a \
         ..
     cd ../..
 fi
 make install -j`nproc` -C aws-sdk-cpp/build
+sed -i -E 's#;[^;]*libcurl\.a;#;libcurl.a;libssl.a;#' /usr/local/lib/cmake/aws-cpp-sdk-core/aws-cpp-sdk-core-targets.cmake
 
 if [ ! -d googletest ]; then
     git clone -b release-1.10.0 https://github.com/google/googletest.git
