@@ -13,17 +13,19 @@ jobs:
   build-and-test:
     runs-on: ubuntu-18.04
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: cache-deps
       id: cache-deps
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: deps-native
-        key: ${{ runner.os }}-deps
+        key: deps-native
   
     - name: install-deps
-      run: sudo ./tools/install-deps-native.sh
+      run: |
+        sudo ./tools/install-deps-native.sh
+        sudo chown -R $(id -u):$(id -g) deps-native
 
     - name: build
       run: |
@@ -37,7 +39,7 @@ jobs:
         CTEST_OUTPUT_ON_FAILURE=1 ctest
 
     - name: upload-artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: always()
       with:
         name: logs

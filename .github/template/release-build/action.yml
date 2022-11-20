@@ -1,0 +1,51 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+name: Release Build
+
+inputs:
+  deps-arch: 
+    required: true
+  build-arch:
+    required: true
+  upload-arch:
+    required: true
+
+runs:
+    using: "composite"
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: cache-deps
+      id: cache-deps
+      uses: actions/cache@v3
+      with:
+        path: deps-${{ inputs.arch }}
+        key: deps-${{ inputs.arch }}
+  
+    - name: install-deps
+      shell: bash
+      run: |
+        sudo ./tools/install-deps-${{ inputs.arch }}.sh
+        sudo chown -R $(id -u):$(id -g) deps-${{ inputs.arch }}
+
+    - name: build
+      shell: bash
+      run: ./tools/build-fwe-${{ inputs.build-arch }}.sh
+
+    - name: upload-asset
+      shell: bash
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        mkdir dist && cd dist
+        cp ../build/src/executionmanagement/aws-iot-fleetwise-edge \
+          ../LICENSE \
+          ../THIRD-PARTY-LICENSES \
+          ../configuration/static-config.json \
+          .
+        RELEASE_VERSION="${GITHUB_REF/refs\/tags\//}"
+        ASSET_FILENAME="aws-iot-fleetwise-edge-${{ inputs.upload-arch }}.tar.gz"
+        tar -zcf ../${ASSET_FILENAME} *
+        cd ..
+        gh release upload ${RELEASE_VERSION} ${ASSET_FILENAME}
