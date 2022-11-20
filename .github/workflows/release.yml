@@ -1,0 +1,43 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+name: Release Build
+
+on:
+  push:
+    tags: [ 'v*.*.*' ]
+
+jobs:
+  build-amd64:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: cache-deps
+      id: cache-deps
+      uses: actions/cache@v3
+      with:
+        path: deps-native
+        key: ${{ runner.os }}-deps
+  
+    - name: install-deps
+      run: sudo ./tools/install-deps-native.sh
+
+    - name: build
+      run: ./tools/build-fwe-native.sh
+
+    - name: package
+      run: |
+        mkdir dist && cd dist
+        cp ../build/src/executionmanagement/aws-iot-fleetwise-edge ../LICENSE ../THIRD-PARTY-LICENSES .
+        tar -zcf aws-iot-fleetwise-edge-amd64-${{ github.ref }}.tar.gz .
+
+    - name: upload-assets
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: https://uploads.github.com/repos/${{ github.repository }}/releases/${{ github.ref }}/assets{?name,label}
+        asset_path: dist/aws-iot-fleetwise-edge-amd64-${{ github.ref }}.tar.gz
+        asset_name: aws-iot-fleetwise-edge-amd64-${{ github.ref }}.tar.gz
+        asset_content_type: application/gzip
