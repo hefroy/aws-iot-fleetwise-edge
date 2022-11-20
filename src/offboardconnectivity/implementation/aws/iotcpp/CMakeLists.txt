@@ -30,6 +30,10 @@ message(STATUS "Connectivity json include ${JSONCPP_INCLUDE_DIR}")
 target_include_directories(${libraryTargetName} PUBLIC include
 ${JSONCPP_INCLUDE_DIR})
 
+find_library(CURL_LIBRARY NAMES curl)
+find_library(OPENSSL_SSL_LIBRARY NAMES ssl)
+find_library(OPENSSL_CRYPTO_LIBRARY NAMES crypto)
+find_library(ZLIB_LIBRARY NAMES z)
 
 target_link_libraries(
   ${libraryTargetName}
@@ -39,6 +43,10 @@ target_link_libraries(
   ${AWSSDK_LINK_LIBRARIES}
   ${SNAPPY_LIBRARIES}
   ${JSONCPP_LIBRARY}
+  ${CURL_LIBRARY}
+  ${OPENSSL_SSL_LIBRARY}
+  ${OPENSSL_CRYPTO_LIBRARY}
+  ${ZLIB_LIBRARY}
 )
 
 
