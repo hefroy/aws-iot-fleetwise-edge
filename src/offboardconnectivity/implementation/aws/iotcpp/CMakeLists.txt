@@ -30,7 +30,7 @@ message(STATUS "Connectivity json include ${JSONCPP_INCLUDE_DIR}")
 target_include_directories(${libraryTargetName} PUBLIC include
 ${JSONCPP_INCLUDE_DIR})
 
-
+separate_arguments(FWE_IOT_SDK_EXTRA_LIBS)
 target_link_libraries(
   ${libraryTargetName}
   IoTFleetWise::OffboardConnectivityAwsBootstrap
@@ -39,6 +39,9 @@ target_link_libraries(
   ${AWSSDK_LINK_LIBRARIES}
   ${SNAPPY_LIBRARIES}
   ${JSONCPP_LIBRARY}
+  # Extra libraries required to link the SDK, for example curl, ssl, crypto, z:
+  # (Can be required if CMake did not find all of the necessary static libs)
+  ${FWE_IOT_SDK_EXTRA_LIBS}
 )
 
 

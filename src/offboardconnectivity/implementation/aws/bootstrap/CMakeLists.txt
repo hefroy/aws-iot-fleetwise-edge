@@ -23,10 +23,14 @@ set(BUILD_SHARED_LIBS ${OLD_BUILD_SHARED_LIBS})
 
 target_include_directories(${libraryTargetName} PUBLIC include)
 
+separate_arguments(FWE_IOT_SDK_EXTRA_LIBS)
 target_link_libraries(
   ${libraryTargetName}
   IoTFleetWise::Platform::Linux
   ${AWSSDK_LINK_LIBRARIES}
+  # Extra libraries required to link the SDK, for example curl, ssl, crypto, z:
+  # (Can be required if CMake did not find all of the necessary static libs)
+  ${FWE_IOT_SDK_EXTRA_LIBS}
 )
 
 add_library(${libraryAliasName} ALIAS ${libraryTargetName})

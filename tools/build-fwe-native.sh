@@ -7,7 +7,7 @@ set -eo pipefail
 mkdir -p build && cd build
 cmake \
   -DFWE_STATIC_LINK=On \
-  -DFWE_STRIP_SYMBOLS=On \
   -DFWE_SECURITY_COMPILE_FLAGS=On \
+  -DFWE_IOT_SDK_EXTRA_LIBS="/usr/local/lib/libcurl.a /usr/lib/$(gcc -dumpmachine)/libssl.a /usr/lib/$(gcc -dumpmachine)/libcrypto.a /usr/lib/$(gcc -dumpmachine)/libz.a" \
   ..
 make -j`nproc`
