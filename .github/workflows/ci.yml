@@ -6,41 +6,40 @@ name: CI
 on:
   push:
     branches: [ '*' ]
+    tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ '*' ]
 
 jobs:
-  build-and-test:
+  build-amd64:
     runs-on: ubuntu-18.04
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-    - uses: actions/checkout@v2
-
-    - name: cache-deps
-      id: cache-deps
-      uses: actions/cache@v2
+    - uses: actions/checkout@v3
+    - uses: "./.github/template/arch-build"
       with:
-        path: deps-native
-        key: ${{ runner.os }}-deps
-  
-    - name: install-deps
-      run: sudo ./tools/install-deps-native.sh
+        build-arch: "native"
+        upload-arch: "amd64"
 
-    - name: build
-      run: |
-        mkdir -p build && cd build
-        cmake ..
-        make -j`nproc`
-
-    - name: unit-test
-      run: |
-        cd build
-        CTEST_OUTPUT_ON_FAILURE=1 ctest
-
-    - name: upload-artifacts
-      uses: actions/upload-artifact@v2
-      if: always()
+  build-arm64:
+    runs-on: ubuntu-18.04
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: "./.github/template/arch-build"
       with:
-        name: logs
-        path: |
-          build/Testing/Temporary/
-          build/**/report-*.xml
+        build-arch: "cross-arm64"
+        upload-arch: "arm64"
+
+  build-armhf:
+    runs-on: ubuntu-18.04
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: "./.github/template/arch-build"
+      with:
+        build-arch: "cross-armhf"
+        upload-arch: "armhf"

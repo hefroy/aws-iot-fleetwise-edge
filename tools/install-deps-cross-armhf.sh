@@ -50,7 +50,6 @@ apt install -y \
     wget \
     curl \
     zlib1g-dev:armhf \
-    libcurl4-openssl-dev:armhf \
     libsnappy-dev:armhf
 
 mkdir -p deps-cross-armhf && cd deps-cross-armhf
@@ -95,15 +94,37 @@ if [ ! -d can-isotp ]; then
 fi
 cp can-isotp/include/uapi/linux/can/isotp.h /usr/include/linux/can
 
+if [ ! -d curl ]; then
+    git clone -b curl-7_86_0 https://github.com/curl/curl.git
+    cd curl
+    mkdir build && cd build
+    cmake \
+        -DBUILD_SHARED_LIBS=Off \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DBUILD_TESTING=Off \
+        -DBUILD_CURL_EXE=Off \
+        -DZLIB_LIBRARY=/usr/lib/arm-linux-gnueabihf/libz.a \
+        -DOPENSSL_SSL_LIBRARY=/usr/lib/arm-linux-gnueabihf/libssl.a \
+        -DOPENSSL_CRYPTO_LIBRARY=/usr/lib/arm-linux-gnueabihf/libcrypto.a \
+        -DCMAKE_TOOLCHAIN_FILE=/usr/local/arm-linux-gnueabihf/lib/cmake/arm64-toolchain.cmake \
+        -DCMAKE_INSTALL_PREFIX=/usr/local/arm-linux-gnueabihf \
+        ..
+    cd ../..
+fi
+make install -j`nproc` -C curl/build
+
 if [ ! -d aws-sdk-cpp ]; then
     git clone -b 1.9.253 --recursive https://github.com/aws/aws-sdk-cpp.git
     cd aws-sdk-cpp
     mkdir build && cd build
     cmake \
+        -DENABLE_TESTING=OFF \
         -DBUILD_SHARED_LIBS=OFF \
         -DCMAKE_BUILD_TYPE=Release \
         -DBUILD_ONLY='s3-crt;iot' \
         -DAWS_CUSTOM_MEMORY_MANAGEMENT=ON \
+        -DZLIB_LIBRARY=/usr/lib/arm-linux-gnueabihf/libz.a \
+        -DCURL_LIBRARY=/usr/local/arm-linux-gnueabihf/lib/libcurl.a \
         -DCMAKE_TOOLCHAIN_FILE=/usr/local/arm-linux-gnueabihf/lib/cmake/armhf-toolchain.cmake \
         -DCMAKE_INSTALL_PREFIX=/usr/local/arm-linux-gnueabihf \
         ..
