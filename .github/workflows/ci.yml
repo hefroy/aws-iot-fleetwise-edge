@@ -49,3 +49,24 @@ jobs:
         with:
           build-arch: "cross-armhf"
           upload-arch: "armhf"
+
+  docker-manifest:
+    runs-on: ubuntu-18.04
+    if: github.ref_type == 'tag'
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: ${{ github.repository }}
+    steps:
+      - name: Log into registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN  }}
+      - name: Create manifest
+        run: |
+          RELEASE_VERSION="${GITHUB_REF/refs\/tags\//}"
+          docker manifest create ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${RELEASE_VERSION} \
+            --amend ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${RELEASE_VERSION}_amd64 \
+            --amend ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${RELEASE_VERSION}_arm64
+          docker manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${RELEASE_VERSION}

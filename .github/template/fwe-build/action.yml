@@ -67,3 +67,4 @@ runs:
       if: inputs.docker-arch != ''
       with:
         docker-arch: ${{ inputs.docker-arch }}
+        image-arch: ${{ inputs.upload-arch }}
