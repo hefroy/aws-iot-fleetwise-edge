@@ -7,7 +7,6 @@ set -eo pipefail
 mkdir -p build && cd build
 cmake \
   -DFWE_STATIC_LINK=On \
-  -DFWE_STRIP_SYMBOLS=On \
   -DFWE_SECURITY_COMPILE_FLAGS=On \
   ..
 make -j`nproc`
