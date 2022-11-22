@@ -47,7 +47,7 @@ parse_args() {
             ;;
         --help)
             echo "Usage: $0 [OPTION]"
-            echo "  --vehicle-name <ID>     Vehicle name"
+            echo "  --vehicle-name <NAME>   Vehicle name"
             echo "  --fleet-size <SIZE>     Size of fleet, default: ${FLEET_SIZE}. When greater than 1,"
             echo "                          the instance number will be appended to each"
             echo "                          Vehicle name after a '-', e.g. ${DEFAULT_VEHICLE_NAME}-42"
