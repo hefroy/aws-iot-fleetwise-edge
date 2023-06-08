@@ -1,5 +1,11 @@
 # Change Log
 
+## TBD
+
+Features:
+
+- Add Android support, including shared library and demonstration app.
+
 ## v1.0.5 (2023-05-11)
 
 Bugfixes:
