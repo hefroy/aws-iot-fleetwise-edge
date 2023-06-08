@@ -79,7 +79,7 @@ jobs:
           mkdir -p tools/android-app/app/src/main/jniLibs
           cp -r build/dist/arm64-v8a build/dist/armeabi-v7a tools/android-app/app/src/main/jniLibs
           cp THIRD-PARTY-LICENSES tools/android-app/app/src/main/assets
-          if [ "${GITHUB_REPOSITORY}" == "aws/aws-iot-fleetwise-edge" ]; then
+          if [ "${GITHUB_REPOSITORY}" == "hefroy/aws-iot-fleetwise-edge" ]; then
             curl -o tools/android-app/app/src/main/res/mipmap-xhdpi/ic_launcher.webp \
               https://fleetwise-app.automotive.iot.aws.dev/ic_launcher.webp
           fi
@@ -87,12 +87,12 @@ jobs:
           unset ANDROID_SDK_ROOT
           ANDROID_HOME=/usr/local/android_sdk ./gradlew assembleRelease
       - uses: aws-actions/configure-aws-credentials@v2
-        if: github.repository == 'aws/aws-iot-fleetwise-edge'
+        if: github.repository == 'hefroy/aws-iot-fleetwise-edge'
         with:
           role-to-assume: ${{ secrets.ANDROID_SIGNING_ROLE }}
           aws-region: us-east-1
       - name: Sign app
-        if: github.repository == 'aws/aws-iot-fleetwise-edge'
+        if: github.repository == 'hefroy/aws-iot-fleetwise-edge'
         run: |
           source tools/install-deps-versions.sh
           SIGNING_INFO=`aws secretsmanager get-secret-value --region us-east-1 --secret-id AndroidAppKeyStore | jq -r .SecretString`
@@ -109,14 +109,14 @@ jobs:
             app/build/outputs/apk/release/app-release-unsigned-aligned.apk
           shred -u ~/android-signing.jks
       - name: upload-artifacts
-        if: github.repository == 'aws/aws-iot-fleetwise-edge'
+        if: github.repository == 'hefroy/aws-iot-fleetwise-edge'
         uses: actions/upload-artifact@v3
         with:
           name: build-android-app
           path: |
             tools/android-app/app/build/outputs/apk/release/aws-iot-fleetwise-edge.apk
       - name: upload-asset
-        if: github.repository == 'aws/aws-iot-fleetwise-edge' && github.ref_type == 'tag'
+        if: github.repository == 'hefroy/aws-iot-fleetwise-edge' && github.ref_type == 'tag'
         run: |
           RELEASE_VERSION="${GITHUB_REF/refs\/tags\//}"
           gh release upload ${RELEASE_VERSION} tools/android-app/app/build/outputs/apk/release/aws-iot-fleetwise-edge.apk
