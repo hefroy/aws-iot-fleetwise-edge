@@ -88,7 +88,7 @@ repos:
           interfaces/protobuf/schemas/edgeConfiguration/staticConfiguration.json --document-file
           "$x"; done' --
         language: python
-        files: "configuration/static-config.json"
+        files: "configuration/static-config.json|tools/customer_release/aws-iot-fleetwise-edge/tools/android-app/app/src/main/assets/config-0.json"
         types: [json]
         additional_dependencies: ["json-spec==0.10.1"]
         verbose: true
