@@ -19,7 +19,7 @@ data from your vehicles to AWS Cloud.
 
 **AWS IoT FleetWise Edge Agent** software provides C++ libraries that enable you to run the
 application on your vehicle. You can use AWS IoT FleetWise pre-configured analytic capabilities to
-process collected data, gain insights about vehicle health, and use the service’s visual interface
+process collected data, gain insights about vehicle health, and use the service's visual interface
 to help diagnose and troubleshoot potential issues with the vehicle.
 
 AWS IoT FleetWise's capability to collect ECU data and store them on cloud databases enables you to
@@ -80,10 +80,10 @@ instance.
 1. (Optional) You can increase the number of simulated vehicles by updating the `FleetSize`
    parameter. You can also specify the region IoT Things are created in by updating the
    `IoTCoreRegion` parameter.
-1. Select the checkbox next to _‘I acknowledge that AWS CloudFormation might create IAM resources
-   with custom names.’_
+1. Select the checkbox next to _'I acknowledge that AWS CloudFormation might create IAM resources
+   with custom names.'_
 1. Choose **Create stack**.
-1. Wait until the status of the Stack is ‘CREATE_COMPLETE’, this will take approximately 10 minutes.
+1. Wait until the status of the Stack is 'CREATE_COMPLETE', this will take approximately 10 minutes.
 
 AWS IoT FleetWise Edge Agent software has been deployed to an AWS EC2 Graviton (ARM64) Instance
 along with credentials that allow it to connect to AWS IoT Core. CAN data is also being generated on
@@ -269,8 +269,8 @@ launch an AWS EC2 Graviton (arm64) instance. Pricing for EC2 can be found,
    1. Do not include the file suffix `.pem`.
    1. If you do not have an SSH key pair, you will need to create one and download the corresponding
       `.pem` file. Be sure to update the file permissions: `chmod 400 <PATH_TO_PEM>`
-1. **Select the checkbox** next to _‘I acknowledge that AWS CloudFormation might create IAM
-   resources with custom names.’_
+1. **Select the checkbox** next to _'I acknowledge that AWS CloudFormation might create IAM
+   resources with custom names.'_
 1. Choose **Create stack**.
 1. Wait until the status of the Stack is **CREATE_COMPLETE**; this can take up to five minutes.
 1. Select the **Outputs** tab, copy the EC2 IP address, and connect via SSH from your local machine
@@ -347,7 +347,7 @@ launch an AWS EC2 Graviton (arm64) instance. Pricing for EC2 can be found,
        && sudo ./tools/install-fwe.sh
    ```
 
-   1. At this point AWS IoT FleetWise Edge Agent is running and periodically sending ‘checkins’ to
+   1. At this point AWS IoT FleetWise Edge Agent is running and periodically sending 'checkins' to
       AWS IoT FleetWise, in order to announce its current list of campaigns (which at this stage
       will be an empty list). CAN data is also being generated on the development machine to
       simulate periodic hard-braking events. The AWS IoT FleetWise Cloud demo script in the
@@ -470,14 +470,14 @@ collect data from it.
 
    ![](./images/collected_data_plot.png)
 
-1. Run the following _on the development machine_ to deploy a ‘heartbeat’ campaign that collects OBD
+1. Run the following _on the development machine_ to deploy a 'heartbeat' campaign that collects OBD
    data from the vehicle. Repeat the process above to view the collected data.
 
    ```bash
    ./demo.sh --vehicle-name fwdemo-ec2 --campaign-file campaign-obd-heartbeat.json
    ```
 
-   Similarly, if you chose to deploy the ‘heartbeat’ campaign that collects OBD data from an AWS IoT
+   Similarly, if you chose to deploy the 'heartbeat' campaign that collects OBD data from an AWS IoT
    thing created in in Europe (Frankfurt), you must configure `--region`:
 
    ```bash
@@ -492,7 +492,7 @@ collect data from it.
    ./demo.sh --vehicle-name fwdemo-ec2 --dbc-file <DBC_FILE> --campaign-file <CAMPAIGN_FILE>
    ```
 
-   Similarly, if you chose to deploy the ‘heartbeat’ campaign that collects OBD data from an AWS IoT
+   Similarly, if you chose to deploy the 'heartbeat' campaign that collects OBD data from an AWS IoT
    thing created in in Europe (Frankfurt), you must configure `--region`:
 
    ```bash
@@ -594,7 +594,7 @@ AWS IoT FleetWise enables you to create campaigns that can be deployed to a flee
 a campaign is active, it is deployed from the cloud to the target vehicles via a push mechanism. AWS
 IoT FleetWise Edge Agent software uses the underlying collection schemes to acquire sensor data from
 the vehicle network. It applies the inspection rules and uploads the data back to AWS IoT FleetWise
-data plane. The data plane persists collected data in the OEM’s AWS Account; the account can then be
+data plane. The data plane persists collected data in the OEM's AWS Account; the account can then be
 used to analyse the data.
 
 ### Software Layers
@@ -722,7 +722,7 @@ This library implements a software module for each of the following:
 - Cache of the needed signals in a signal history buffer.
 
 Upon fulfillment of one or more trigger conditions, this library extracts from the signal history
-buffer a data snapshot that’s shared with the Off-board connectivity library for further processing.
+buffer a data snapshot that's shared with the Off-board connectivity library for further processing.
 Again here a circular buffer is used as a transport mechanism of the data between the two libraries.
 
 **Connectivity Library**
@@ -817,7 +817,7 @@ message Checkin {
     * has enacted including collection schemes (both idle and active)
     * and decoder manifest.
     */
-    repeated string document_arns = 1;
+    repeated string document_sync_ids = 1;
     /*
      * Timestamp of when check in was generated in milliseconds since
      * the Unix epoch
@@ -837,16 +837,16 @@ syntax = "proto3";
 message VehicleData {
 
     /*
-     * Amazon Resource Name of the campaign that triggered the collection of the
+     * Synchronization ID of the campaign that triggered the collection of the
      * data in this message
      */
-    string campaign_arn = 1;
+    string campaign_sync_id = 1;
 
     /*
-     * Amazon Resource Name of the decoder manifest used to decode the signals
+     * Synchronization ID of the decoder manifest used to decode the signals
      * in this message
      */
-    string decoder_arn = 2;
+    string decoder_sync_id = 2;
 
     /*
      * A unique ID that FWE generates each time a Scheme condition is triggered.
@@ -1153,15 +1153,15 @@ message CollectionSchemes {
 message CollectionScheme {
 
     /*
-     * Amazon Resource Name of the campaign this collectionScheme is part of
+     * Synchronization ID of the campaign this collectionScheme is part of
      */
-    string campaign_arn = 1;
+    string campaign_sync_id = 1;
 
     /*
-     * Amazon Resource Name of the required decoder manifest for this
+     * Synchronization ID of the required decoder manifest for this
      * collectionScheme
      */
-    string decoder_manifest_arn = 2;
+    string decoder_manifest_sync_id = 2;
 
     /*
      * When collectionScheme should start in milliseconds since the Unix epoch
@@ -1679,14 +1679,18 @@ described below in the configuration section. Each log entry includes the follow
 |                             | metricsCyclicPrintIntervalMs                | Sets the interval in milliseconds how often the application metrics should be printed to stdout. Default 0 means never                                                                                                                                                                                                                                                          | string   |
 | publishToCloudParameters    | maxPublishMessageCount                      | Maximum messages that can be published to the cloud in one payload                                                                                                                                                                                                                                                                                                              | integer  |
 |                             | collectionSchemeManagementCheckinIntervalMs | Time interval between collection schemes checkins(in milliseconds)                                                                                                                                                                                                                                                                                                              | integer  |
-| mqttConnection              | endpointUrl                                 | AWS account’s IoT device endpoint                                                                                                                                                                                                                                                                                                                                               | string   |
+| mqttConnection              | endpointUrl                                 | AWS account's IoT device endpoint                                                                                                                                                                                                                                                                                                                                               | string   |
 |                             | clientId                                    | The ID that uniquely identifies this device in the AWS Region                                                                                                                                                                                                                                                                                                                   | string   |
 |                             | collectionSchemeListTopic                   | Topic for subscribing to Collection Scheme                                                                                                                                                                                                                                                                                                                                      | string   |
 |                             | decoderManifestTopic                        | Topic for subscribing to Decoder Manifest                                                                                                                                                                                                                                                                                                                                       | string   |
 |                             | canDataTopic                                | Topic for sending collected data to cloud                                                                                                                                                                                                                                                                                                                                       | string   |
 |                             | checkinTopic                                | Topic for sending checkins to the cloud                                                                                                                                                                                                                                                                                                                                         | string   |
-|                             | certificateFilename                         | The path to the device’s certificate file                                                                                                                                                                                                                                                                                                                                       | string   |
-|                             | privateKeyFilename                          | The path to the device’s private key file.                                                                                                                                                                                                                                                                                                                                      | string   |
+|                             | certificateFilename                         | The path to the device's certificate file (either `certificateFilename` or `certificate` must be provided)                                                                                                                                                                                                                                                                      | string   |
+|                             | privateKeyFilename                          | The path to the device's private key file (either `privateKeyFilename` or `privateKey` must be provided)                                                                                                                                                                                                                                                                        | string   |
+|                             | rootCAFilename                              | The path to the root CA certificate file (optional, either `rootCAFilename` or `rootCA` can be provided)                                                                                                                                                                                                                                                                        | string   |
+|                             | certificate                                 | The path to the device's certificate file (either `certificateFilename` or `certificate` must be provided)                                                                                                                                                                                                                                                                      | string   |
+|                             | privateKey                                  | The path to the device's private key file (either `privateKeyFilename` or `privateKey` must be provided)                                                                                                                                                                                                                                                                        | string   |
+|                             | rootCA                                      | The path to the root CA certificate file (optional, either `rootCAFilename` or `rootCA` can be provided)                                                                                                                                                                                                                                                                        | string   |
 |                             | metricsUploadTopic                          | Topic used to upload application metrics in plain json. Only used if `remoteProfilerDefaultValues` section is configured                                                                                                                                                                                                                                                        | string   |
 |                             | loggingUploadTopic                          | Topic used to upload log messages in plain json. Only used if `remoteProfilerDefaultValues` section is configured                                                                                                                                                                                                                                                               | string   |
 | remoteProfilerDefaultValues | loggingUploadLevelThreshold                 | Only log messages with this or higher severity will be uploaded                                                                                                                                                                                                                                                                                                                 | integer  |
@@ -1706,7 +1710,7 @@ incorporated into four main domains:
   for further details.
 - Data in transit: All the data exchanged with the AWS IoT services is encrypted in transit.
 - Data at rest: the current version of the software does not encrypt the data at rest i.e. during
-  persistency. It’s assumed that the software operates in a secure partition that the OEM puts in
+  persistency. It's assumed that the software operates in a secure partition that the OEM puts in
   place and rely on the OEM secure storage infrastructure that is applied for all IO operations
   happening in the gateway e.g. via HSM, OEM crypto stack.
 - Access to vehicle CAN data: the device software assumes that the software operates in a secure

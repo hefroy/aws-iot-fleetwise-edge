@@ -1,5 +1,17 @@
 # Change Log
 
+## TBD
+
+Features:
+
+- Add Android support, including shared library and demonstration app.
+
+Improvements:
+
+- Change from `arn` to `sync_id` for campaign_arn and document_arns, the `sync_id` being the ARN
+  followed by the timestamp of the last update. The change is backwards compatible with older
+  versions of the edge agent.
+
 ## v1.0.5 (2023-05-11)
 
 Bugfixes:
