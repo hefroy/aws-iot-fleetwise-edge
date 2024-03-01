@@ -301,6 +301,7 @@ if(FWE_FEATURE_VISION_SYSTEM_DATA)
     src/DataSenderIonWriter.cpp
     src/RawDataManager.cpp
     src/S3Sender.cpp
+    src/MyBlobDataSource.cpp
   )
   set(TEST_FILES ${TEST_FILES}
     test/unit/CredentialsTest.cpp
@@ -314,6 +315,7 @@ if(FWE_FEATURE_VISION_SYSTEM_DATA)
     src/RawDataManager.h
     src/S3Sender.h
     src/TransferManagerWrapper.h
+    src/MyBlobDataSource.h
   )
 endif()
 if(FWE_FEATURE_ROS2)

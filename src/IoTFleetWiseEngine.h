@@ -46,6 +46,7 @@
 #include "IWaveGpsSource.h"
 #endif
 #ifdef FWE_FEATURE_VISION_SYSTEM_DATA
+#include "MyBlobDataSource.h"
 #include "S3Sender.h"
 #include <aws/core/auth/AWSCredentialsProvider.h>
 #include <aws/core/utils/threading/Executor.h>
@@ -194,6 +195,7 @@ private:
     std::shared_ptr<Aws::Auth::AWSCredentialsProvider> mAwsCredentialsProvider;
     std::shared_ptr<Aws::Utils::Threading::PooledThreadExecutor> mTransferManagerExecutor;
     std::shared_ptr<S3Sender> mS3Sender;
+    std::unique_ptr<MyBlobDataSource> mMyBlobDataSource;
 #endif
 #ifdef FWE_FEATURE_IWAVE_GPS
     std::shared_ptr<IWaveGpsSource> mIWaveGpsSource;

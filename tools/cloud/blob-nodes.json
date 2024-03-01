@@ -1,0 +1,32 @@
+[
+  {
+    "branch": {
+      "fullyQualifiedName": "Types"
+    }
+  },
+  {
+    "struct": {
+      "fullyQualifiedName": "Types.MyBlobType"
+    }
+  },
+  {
+    "property": {
+      "fullyQualifiedName": "Types.MyBlobType.data",
+      "dataType": "UINT8_ARRAY",
+      "dataEncoding": "BINARY"
+    }
+  },
+  {
+    "branch": {
+      "fullyQualifiedName": "Vehicle",
+      "description": "Vehicle"
+    }
+  },
+  {
+    "sensor": {
+      "fullyQualifiedName": "Vehicle.MyBlobSource",
+      "dataType": "STRUCT",
+      "structFullyQualifiedName": "Types.MyBlobType"
+    }
+  }
+]

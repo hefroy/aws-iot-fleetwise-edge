@@ -1,0 +1,10 @@
+[
+  {
+    "interfaceId": "MyBlobNetworkInterfaceId",
+    "type": "VEHICLE_MIDDLEWARE",
+    "vehicleMiddleware": {
+      "name": "blob",
+      "protocolName": "ROS_2"
+    }
+  }
+]

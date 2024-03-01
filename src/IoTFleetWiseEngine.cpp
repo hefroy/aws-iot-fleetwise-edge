@@ -684,6 +684,15 @@ IoTFleetWiseEngine::connect( const Json::Value &jsonConfig )
             }
         }
 
+#ifdef FWE_FEATURE_VISION_SYSTEM_DATA
+        mMyBlobDataSource = std::make_unique<MyBlobDataSource>( signalBufferPtr, rawDataBufferManager );
+        mCollectionSchemeManagerPtr->subscribeToActiveDecoderDictionaryChange(
+            std::bind( &MyBlobDataSource::onChangeOfActiveDictionary,
+                       mMyBlobDataSource.get(),
+                       std::placeholders::_1,
+                       std::placeholders::_2 ) );
+#endif
+
         /********************************Data source bootstrap end*******************************/
 
         // Only start the CollectionSchemeManager after all listeners have subscribed, otherwise

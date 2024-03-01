@@ -1,0 +1,31 @@
+[
+  {
+    "fullyQualifiedName": "Vehicle.MyBlobSource",
+    "type": "MESSAGE_SIGNAL",
+    "interfaceId": "MyBlobNetworkInterfaceId",
+    "messageSignal": {
+      "topicName": "MyBlobMessageId",
+      "structuredMessage": {
+        "structuredMessageDefinition": [
+          {
+            "fieldName": "data",
+            "dataType": {
+              "structuredMessageListDefinition": {
+                "name": "listType",
+                "memberType": {
+                  "primitiveMessageDefinition": {
+                    "ros2PrimitiveMessageDefinition": {
+                      "primitiveType": "UINT8"
+                    }
+                  }
+                },
+                "capacity": 0,
+                "listType": "DYNAMIC_UNBOUNDED_CAPACITY"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+]
