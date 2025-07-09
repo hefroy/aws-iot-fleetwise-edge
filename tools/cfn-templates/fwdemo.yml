@@ -625,7 +625,7 @@ Mappings:
   # Ubuntu 22.04 arm64 AMIs
   AMIRegionMap:
     ap-northeast-1:
-      AMIID: ami-0ee8e95ead0dca661
+      AMIID: ami-00a088937d716687c
     ap-northeast-2:
       AMIID: ami-00a088937d716687c
     ap-northeast-3:
